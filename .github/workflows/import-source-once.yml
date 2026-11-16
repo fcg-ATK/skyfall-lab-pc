@@ -1,0 +1,58 @@
+name: Import reviewed PC source once
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: skyfall-lab-pc-source-import
+  cancel-in-progress: false
+
+jobs:
+  import-source:
+    if: github.repository == 'fcg-ATK/skyfall-lab-pc'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      # Maintainer must replace this with the SHA256 of the reviewed source ZIP.
+      ARCHIVE_SHA256: 93f0b4d0ffab75eb7a76d02be0e770cf6eaad3866be90dff68454b2d13326e7c
+    steps:
+      - name: Require the fixed repository and main branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'fcg-ATK/skyfall-lab-pc'
+          test "$GITHUB_EVENT_NAME" = 'workflow_dispatch'
+          test "$GITHUB_REF" = 'refs/heads/main'
+
+      - name: Check out main using the job GITHUB_TOKEN
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: fcg-ATK/skyfall-lab-pc
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify and import the fixed public release ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e .skyfall-source-imported.json
+          python3 .github/scripts/import_release.py
+
+      - name: Commit source and fast-forward check before push
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all -- . ':!.github'
+          git add --force -- .skyfall-source-imported.json
+          git diff --cached --quiet && { echo 'No import changes to commit'; exit 1; }
+          git -c core.hooksPath=/dev/null -c commit.gpgsign=false commit -m 'Import reviewed Skyfall PC source v0.1.0'
+          git -c core.hooksPath=/dev/null -c pull.rebase=false -c rebase.autoStash=false pull --ff-only origin main
+          git -c core.hooksPath=/dev/null push origin HEAD:main
+
