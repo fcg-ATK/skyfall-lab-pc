@@ -1,0 +1,15 @@
+{
+  "path": "SourceAssets/Meteor/meteor_core.fbx",
+  "mesh_name": "meteor_core",
+  "dimensions_m": [
+    3.4000000953674316,
+    3.098527669906616,
+    2.8924129009246826
+  ],
+  "vertices": 2562,
+  "triangles": 5120,
+  "centred_metres": true,
+  "actor_scale_for_unreal": 100,
+  "sha256": "ce64e12fc09889eca07744c512dde24db864f2fb69336b9b641408cb3c52cf30",
+  "fbx_roundtrip_max_dimension_error_m": 0.0
+}

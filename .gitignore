@@ -1,0 +1,19 @@
+# Unreal generated data and local validation reports
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+/.vs/
+*.sln
+*.suo
+*.log
+__pycache__/
+*.py[cod]
+
+# Generated from locally installed Epic templates: never publish these assets.
+/Content/Skyfall/CombatV2/Effects/NS_HighEnergyImpact.uasset
+/Content/Skyfall/CombatV2/Effects/NS_LocalDust.uasset
+/Content/Skyfall/CombatV2/Effects/NS_RocketExhaust.uasset
+/Content/Skyfall/Meteor/NS_MeteorExit.uasset
+/Content/Skyfall/Meteor/NS_MeteorImpact.uasset
+/Content/Skyfall/Meteor/NS_MeteorTail.uasset
